@@ -16,6 +16,7 @@ class sessionwatch {
 
     public static function write(?string $param = null):void{
         $data['session'] = session_id();
+        $data['time'] = time();
         $data['class'] = debug_backtrace()[1]['class'];
         $data['function'] = debug_backtrace()[1]['function'];
         if(!is_null($param)){
@@ -38,6 +39,8 @@ class sessionwatch {
             $tempArray = json_decode($temp,true);
         }
         array_push($tempArray,$str);
+        $data = json_encode($tempArray);
+        file_put_contents($filename,$data);
     }
 
 
@@ -46,6 +49,22 @@ class sessionwatch {
 }
 
     public static function files():?array{
+        $files = NULL;
+        $path = DOCROOT.'/data/session/';
+        if(file_exists($path)){
+            $files = scandir($path);
+            if($files != false){
+                if(($key = array_search('.',$files)) != false){
+                    unset($files[$key]);
+                }
+                if(($key = array_search('..',$files)) != false){
+                    unset($files[$key]);
+                }
+            }
+        }
+
+        return $files;
+
 
     }
 
