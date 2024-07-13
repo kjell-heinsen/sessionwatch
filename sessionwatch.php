@@ -32,19 +32,26 @@ class sessionwatch {
 
 
     public static function log(array $data,?string $user = NULL):void{
-        $filename = DOCROOT.'/data/session/'.$user.'_'.$data['session'].'.json';
-        $json = json_encode($data);
-        $str = json_decode($json,true);
-        if(($temp = file_get_contents($filename)) != false){
-            $tempArray = json_decode($temp,true);
+        if(!is_null($user)) {
+            $filename = DOCROOT . '/data/session/' . $user . '_' . $data['session'] . '.json';
+            $json = json_encode($data);
+            $str = json_decode($json, true);
+            if (($temp = file_get_contents($filename)) != false) {
+                $tempArray = json_decode($temp, true);
+            }
+            array_push($tempArray, $str);
+            $data = json_encode($tempArray);
+            file_put_contents($filename, $data);
         }
-        array_push($tempArray,$str);
-        $data = json_encode($tempArray);
-        file_put_contents($filename,$data);
     }
 
 
     public static function read():?array{
+        $return = array();
+
+
+
+        return $return;
 
 }
 
