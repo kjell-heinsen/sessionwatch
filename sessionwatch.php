@@ -46,11 +46,22 @@ class sessionwatch {
     }
 
 
-    public static function read():?array{
-        $return = array();
+    public static function read(string $user, string $session):?array{
+        $return = [];
+        $files = self::files();
 
-
-
+       foreach($files AS $file){
+           if((strpos($file,$session) != false) OR (strpos($file,$user) != false)){
+            $part = $file;
+           }
+       }
+        $file_content = file_get_contents($part);
+        $json_objects = explode("\n", $file_content);
+        foreach ($json_objects as $json_string) {
+            if (trim($json_string) !== '') {
+                $return[] = json_decode($json_string, true);
+            }
+        }
         return $return;
 
 }
@@ -69,9 +80,7 @@ class sessionwatch {
                 }
             }
         }
-
         return $files;
-
 
     }
 
