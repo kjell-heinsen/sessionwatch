@@ -53,12 +53,12 @@ class session {
      * @return mixed
      */
 
-   public static function get(string|int $key, $secondkey = false):mixed {
+   public static function get(string|int $key, string | int $secondkey = NULL):mixed {
        session_start(self::$_config);
        $return = false;
-      if ($secondkey == true) {
-         if (isset($_SESSION[SESSION_PREFIX . $key][$secondkey])) {
-            $return =  $_SESSION[SESSION_PREFIX . $key][$secondkey];
+      if (!is_null($secondkey)) {
+         if (isset($_SESSION[SESSION_PREFIX . $key][SESSION_PREFIX .$secondkey])) {
+            $return =  $_SESSION[SESSION_PREFIX . $key][SESSION_PREFIX .$secondkey];
              session_write_close();
             return $return;
          }
