@@ -5,7 +5,6 @@
  * Vorteil dieser Variante ist, dass die Session in PHP nicht blockiert. Mehrere Tabs mit längeren komplexen Operationen innerhalb
  * einer Session haben häufig das Problem, dass andere Tabs durch längere Operationen blockieren.
  * Diese Variante überbrückt dieses Problem.
- *
  */
 class session {
 
@@ -15,7 +14,12 @@ class session {
      */
    private array $_config = array(
       'cookie_lifetime' => SESSIONTIME,
-    );
+      'cookie_path' => '/',
+      'cookie_domain' => DOMAIN,
+      'cookie_secure' => true,
+      'cookie_httponly' => true,
+      'cookie_samesite' => 'lax',
+   );
 
 
     /**
@@ -26,9 +30,12 @@ class session {
    public static function init():void {
        $time = time()+SESSIONTIME;
        ini_set('session.cookie_lifetime',SESSIONTIME);
-       session_set_cookie_params($time);
-       session_start(self::$_config);
-       session_write_close();
+       if(session_start(self::$_config)) {
+        session_write_close();
+       } else
+       {
+         throw new Exception('[SESSION ERROR] [INIT]');
+       }
    }
 
     /**
@@ -49,7 +56,7 @@ class session {
     /**
      * Abrufen eines Wertes mit dem entsprechenden Schluessel und eventuellem Zweitschluessel
      * @param string|int $key
-     * @param $secondkey
+     * @param string|int $secondkey
      * @return mixed
      */
 
@@ -87,11 +94,11 @@ class session {
 
     /**
      * Entsprechenden Schluessel der Session leeren
-     * @param $key
+     * @param string|int $key
      * @return void
      */
 
-   public static function clear($key):void {
+   public static function clear(string|int $key):void {
        session_start(self::$_config);
        unset($_SESSION[SESSION_PREFIX . $key]);
        session_write_close();
@@ -112,6 +119,7 @@ class session {
            setcookie(session_name(),'',0,'/');
            session_regenerate_id(true);
       }
+
      }
 
 }
